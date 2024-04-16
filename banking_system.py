@@ -1,9 +1,13 @@
+import textwrap
+
 LIMITE_SAQUES = 3
 
 saldo = 0
 limite = 500
 extrato = ""
 numero_saques = 0
+contas = []
+usuarios = []
 
 def depositar(valor):
     global saldo, extrato
@@ -30,10 +34,58 @@ def mostrar_extrato():
     print(f"\nSaldo: R$ {saldo:.2f}")
     print("==========================================")
 
+def criar_usuario(usuarios):
+    cpf = input("Informe o CPF (somente números): ")
+    if not cpf.isdigit():
+        print("\n@@@ CPF inválido! Apenas números são permitidos! @@@")
+        return
+
+    if filtrar_usuario(cpf, usuarios):
+        print("\n@@@ Já existe usuário com esse CPF! @@@")
+        return
+
+    nome = input("Informe o nome completo: ")
+    data_nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ")
+    endereco = input("Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): ")
+
+    usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
+
+    print("=== Usuário criado com sucesso! ===")
+
+def filtrar_usuario(cpf, usuarios):
+    for usuario in usuarios:
+        if usuario["cpf"] == cpf:
+            return usuario
+    return None
+
+def criar_conta(numero_conta, usuarios):
+    cpf = input("Informe o CPF do usuário: ")
+    usuario = filtrar_usuario(cpf, usuarios)
+
+    if usuario:
+        print("\n=== Conta criada com sucesso! ===")
+        return {"agencia": "0001", "numero_conta": numero_conta, "usuario": usuario}
+
+    print("\n@@@ Usuário não encontrado, fluxo de criação de conta encerrado! @@@")
+    return None
+
+def listar_contas(contas):
+    for conta in contas:
+        linha = f"""\
+            Agência:\t{conta['agencia']}
+            C/C:\t\t{conta['numero_conta']}
+            Titular:\t{conta['usuario']['nome']}
+        """
+        print("=" * 100)
+        print(textwrap.dedent(linha))
+
 menu = """
 [d] Depositar
 [s] Sacar
 [e] Extrato
+[c] Criar conta
+[u] Criar usuário
+[l] Listar contas
 [q] Sair
 
 => """
@@ -55,6 +107,20 @@ while True:
     elif opcao == "e":
         mostrar_extrato()
 
+    elif opcao == "c":
+        numero_conta = input("Informe o número da conta: ")
+        conta = criar_conta(numero_conta, usuarios)
+        if conta:
+            contas.append(conta)
+
+    elif opcao == "u":
+        criar_usuario(usuarios)
+
+    elif opcao == "l":
+        listar_contas(contas)
+
     elif opcao == "q":
         break
 
+    else:
+        print("Operação inválida, por favor selecione novamente a operação desejada.")
