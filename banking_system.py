@@ -20,6 +20,52 @@ class PessoaFisica(Cliente):
         self.nome = nome
         self.data_nascimento = data_nascimento
 
+class Conta():
+    def __init__(self, numero, cliente):
+        self._agencia = "0001"
+        self._numero = numero
+        self._saldo = 0
+        self._cliente = cliente
+
+    @property
+    def agencia(self):
+        return self._agencia
+    
+    @property
+    def numero(self):
+        return self._numero
+    
+    @property
+    def saldo(self):
+        return self._saldo
+    
+    @property
+    def cliente(self):
+        return self._cliente
+    
+    @classmethod
+    def nova_conta(cls, numero, cliente):
+        return cls(numero, cliente)
+    
+    def depositar(self, valor):
+        if valor <= 0:
+            print("Operação falhou! O valor informado é inválido.")
+            return False
+        
+        self._saldo += valor
+        return True
+    
+    def sacar(self, valor):
+        if valor > self._saldo:
+            print("Operação falhou! Você não tem saldo suficiente.")
+            return False
+        
+        if valor <= 0:
+            print("Operação falhou! O valor informado é inválido.")
+            return False
+        
+        self._saldo -= valor
+        return True
 
 LIMITE_SAQUES = 3
 
