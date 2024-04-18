@@ -66,6 +66,20 @@ class Conta():
         
         self._saldo -= valor
         return True
+    
+class ContaCorrente(Conta):
+    def __init__(self, numero, cliente):
+        super().__init__(numero, cliente)
+        self.limite = 500
+        self.limite_saques = 3
+    
+    def __str__(self):
+        return f"""\
+            Agência:\t{self.agencia}
+            C/C:\t\t{self.numero}
+            Titular:\t{self.cliente.nome}
+        """
+    
 
 LIMITE_SAQUES = 3
 
