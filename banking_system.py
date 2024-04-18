@@ -1,6 +1,6 @@
 import textwrap
 from datetime import datetime
-from abc import ABC, classmethod, abstractmethod
+from abc import ABC, abstractmethod
 
 
 class Cliente():
@@ -80,7 +80,7 @@ class ContaCorrente(Conta):
         self.limite_saques = 3
     
     def sacar(self, valor):
-        numero_saques = len([transacao for transacao in self.historico.transacoes if transacao["tipo"] == Saque.__name__])
+        numero_saques = len([transacao for transacao in self.historico.transacoes if transacao['tipo'] == Saque.__name__])
 
         if numero_saques >= self.limite_saques:
             print("Operação falhou! Número máximo de saques excedido.")
@@ -164,11 +164,15 @@ def depositar():
     if not cliente:
         print("Cliente não encontrado!")
         return
+    
+    if not cliente.contas:
+        print("O cliente não possui contas!")
+        return
 
     valor = float(input("Informe o valor do depósito: "))
     transacao = Deposito(valor)
 
-    conta = cliente["conta"][0]
+    conta = cliente.contas[0]
     if not conta:
         print("Conta não encontrada!")
         return
@@ -182,10 +186,15 @@ def sacar():
     if not cliente:
         print("Cliente não encontrado!")
         return
+    
+    if not cliente.contas:
+        print("O cliente não possui contas!")
+        return
+
     valor = float(input("Informe o valor do saque: "))
     transacao = Saque(valor)
 
-    conta = cliente["conta"][0]
+    conta = cliente.contas[0]
     if not conta:
         print("Conta não encontrada!")
         return
@@ -201,7 +210,11 @@ def mostrar_extrato():
         print("Cliente não encontrado!")
         return
 
-    conta = cliente["conta"][0]
+    if not cliente.contas:
+        print("O cliente não possui contas!")
+        return
+    
+    conta = cliente.contas[0]
     if not conta:
         print("Conta não encontrada!")
         return
@@ -242,11 +255,12 @@ def criar_cliente(clientes):
 
 def filtrar_clientes(cpf, clientes):
     for cliente in clientes:
-        if cliente["cpf"] == cpf:
+        if cliente.cpf == cpf:
             return cliente
     return None
 
-def criar_conta(numero_conta, clientes, contas):
+def criar_conta(clientes, contas):
+
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_clientes(cpf, clientes)
 
@@ -254,18 +268,24 @@ def criar_conta(numero_conta, clientes, contas):
         print("Cliente não encontrado, fluxo de criação de conta encerrado!")
         return None
 
-    print("\n=== Conta criada com sucesso! ===")
+    numero_conta = input("Informe o número da conta: ")
+    
     conta = ContaCorrente.nova_conta(numero_conta, cliente)
     contas.append(conta)
     cliente.adicionar_conta(conta)
+    print("\n=== Conta criada com sucesso! ===")
     return 
 
 def listar_contas(contas):
+
+    if not contas:
+        print("Não existem contas cadastradas!")
+        return
     for conta in contas:
         linha = f"""\
-            Agência:\t{conta['agencia']}
-            C/C:\t\t{conta['numero']}
-            Titular:\t{conta['cliente']['nome']}
+            Agência:\t{conta.agencia}
+            C/C:\t\t{conta.numero}
+            Titular:\t{conta.cliente.nome}
         """
         print("=" * 42)
         print(textwrap.dedent(linha))
@@ -294,8 +314,7 @@ while True:
         mostrar_extrato()
 
     elif opcao == "c":
-        numero_conta = input("Informe o número da conta: ")
-        conta = criar_conta(numero_conta, clientes, contas)
+        conta = criar_conta(clientes, contas)
         if conta:
             contas.append(conta)
 
