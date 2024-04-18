@@ -187,7 +187,7 @@ def criar_cliente(clientes):
         return
 
     if filtrar_clientes(cpf, clientes):
-        print("\n@@@ Já existe usuário com esse CPF! @@@")
+        print("\n@@@ Já existe cliente com esse CPF! @@@")
         return
 
     nome = input("Informe o nome completo: ")
@@ -207,14 +207,14 @@ def filtrar_clientes(cpf, clientes):
     return None
 
 def criar_conta(numero_conta, clientes):
-    cpf = input("Informe o CPF do usuário: ")
+    cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_clientes(cpf, clientes)
 
     if cliente:
         print("\n=== Conta criada com sucesso! ===")
         return {"agencia": "0001", "numero_conta": numero_conta, "cliente": cliente}
 
-    print("\n@@@ Usuário não encontrado, fluxo de criação de conta encerrado! @@@")
+    print("\n@@@ Cliente não encontrado, fluxo de criação de conta encerrado! @@@")
     return None
 
 def listar_contas(contas):
