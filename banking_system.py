@@ -76,6 +76,19 @@ class ContaCorrente(Conta):
         self.limite = 500
         self.limite_saques = 3
     
+    def sacar(self, valor):
+        numero_saques = len([transacao for transacao in self.historico.transacoes if transacao["tipo"] == "Saque"])
+
+        if numero_saques >= self.limite_saques:
+            print("Operação falhou! Número máximo de saques excedido.")
+            return False
+        
+        if valor > self.limite:
+            print("Operação falhou! O valor do saque excede o limite.")
+            return False
+        
+        return super().sacar(valor)
+
     def __str__(self):
         return f"""\
             Agência:\t{self.agencia}
