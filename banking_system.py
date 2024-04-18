@@ -156,9 +156,20 @@ contas = []
 clientes = []
 
 def depositar(valor):
-    global saldo, extrato
-    saldo += valor
-    extrato += f"Depósito: R$ {valor:.2f}\n"
+    cpf = input("Informe o CPF do cliente: ")
+    cliente = filtrar_clientes(cpf, clientes)
+    if not cliente:
+        print("Cliente não encontrado!")
+        return
+
+    valor = float(input("Informe o valor do depósito: "))
+    transacao = Deposito(valor)
+
+    conta = cliente["conta"][0]
+    if not conta:
+        return
+
+    cliente.realizar_transacao(conta, transacao)
 
 def sacar(valor):
     global saldo, extrato, numero_saques
@@ -183,11 +194,11 @@ def mostrar_extrato():
 def criar_cliente(clientes):
     cpf = input("Informe o CPF (somente números): ")
     if not cpf.isdigit():
-        print("\n@@@ CPF inválido! Apenas números são permitidos! @@@")
+        print("CPF inválido! Apenas números são permitidos!")
         return
 
     if filtrar_clientes(cpf, clientes):
-        print("\n@@@ Já existe cliente com esse CPF! @@@")
+        print("Já existe cliente com esse CPF!")
         return
 
     nome = input("Informe o nome completo: ")
@@ -211,7 +222,7 @@ def criar_conta(numero_conta, clientes, contas):
     cliente = filtrar_clientes(cpf, clientes)
 
     if not cliente:
-        print("\n@@@ Cliente não encontrado, fluxo de criação de conta encerrado! @@@")
+        print("Cliente não encontrado, fluxo de criação de conta encerrado!")
         return None
 
     print("\n=== Conta criada com sucesso! ===")
