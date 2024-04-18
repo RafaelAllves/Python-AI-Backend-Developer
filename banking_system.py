@@ -28,6 +28,7 @@ class Conta():
         self._numero = numero
         self._saldo = 0
         self._cliente = cliente
+        self._historico = Historico()
 
     @property
     def agencia(self):
@@ -92,7 +93,7 @@ class Historico():
     
     def adicionar_transacao(self, transacao):
         self._transacoes.append({
-            "tipo": transacao.tipo,
+            "tipo": transacao.__class__.__name__,
             "valor": transacao.valor,
             "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s"),
         })
