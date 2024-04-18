@@ -153,7 +153,7 @@ limite = 500
 extrato = ""
 numero_saques = 0
 contas = []
-usuarios = []
+clientes = []
 
 def depositar(valor):
     global saldo, extrato
@@ -180,13 +180,13 @@ def mostrar_extrato():
     print(f"\nSaldo: R$ {saldo:.2f}")
     print("==========================================")
 
-def criar_usuario(usuarios):
+def criar_cliente(clientes):
     cpf = input("Informe o CPF (somente números): ")
     if not cpf.isdigit():
         print("\n@@@ CPF inválido! Apenas números são permitidos! @@@")
         return
 
-    if filtrar_usuario(cpf, usuarios):
+    if filtrar_clientes(cpf, clientes):
         print("\n@@@ Já existe usuário com esse CPF! @@@")
         return
 
@@ -194,19 +194,21 @@ def criar_usuario(usuarios):
     data_nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ")
     endereco = input("Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): ")
 
-    usuarios.append({"nome": nome, "data_nascimento": data_nascimento, "cpf": cpf, "endereco": endereco})
+    cliente = PessoaFisica(cpf, nome, data_nascimento, endereco)
 
-    print("=== Usuário criado com sucesso! ===")
+    clientes.append(cliente)
 
-def filtrar_usuario(cpf, usuarios):
-    for usuario in usuarios:
-        if usuario["cpf"] == cpf:
-            return usuario
+    print("=== Cliente criado com sucesso! ===")
+
+def filtrar_clientes(cpf, clientes):
+    for cliente in clientes:
+        if cliente["cpf"] == cpf:
+            return cliente
     return None
 
-def criar_conta(numero_conta, usuarios):
+def criar_conta(numero_conta, clientes):
     cpf = input("Informe o CPF do usuário: ")
-    usuario = filtrar_usuario(cpf, usuarios)
+    usuario = filtrar_clientes(cpf, clientes)
 
     if usuario:
         print("\n=== Conta criada com sucesso! ===")
@@ -255,12 +257,12 @@ while True:
 
     elif opcao == "c":
         numero_conta = input("Informe o número da conta: ")
-        conta = criar_conta(numero_conta, usuarios)
+        conta = criar_conta(numero_conta, clientes)
         if conta:
             contas.append(conta)
 
     elif opcao == "u":
-        criar_usuario(usuarios)
+        criar_cliente(clientes)
 
     elif opcao == "l":
         listar_contas(contas)
