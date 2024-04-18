@@ -8,9 +8,8 @@ class Cliente():
         self.endereco = endereco
         self.contas = []
     
-    def realizar_transacao(conta, transacao):
-        print("Transação realizada com sucesso!")
-        pass
+    def realizar_transacao(self, conta, transacao):
+        transacao.registrar(conta)
     
     def adicionar_conta(self, conta):
         self.contas.append(conta)
@@ -155,7 +154,7 @@ numero_saques = 0
 contas = []
 clientes = []
 
-def depositar(valor):
+def depositar():
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_clientes(cpf, clientes)
     if not cliente:
@@ -167,22 +166,27 @@ def depositar(valor):
 
     conta = cliente["conta"][0]
     if not conta:
+        print("Conta não encontrada!")
         return
 
     cliente.realizar_transacao(conta, transacao)
 
-def sacar(valor):
-    global saldo, extrato, numero_saques
-    if valor > saldo:
-        print("Operação falhou! Você não tem saldo suficiente.")
-    elif valor > limite:
-        print("Operação falhou! O valor do saque excede o limite.")
-    elif numero_saques >= LIMITE_SAQUES:
-        print("Operação falhou! Número máximo de saques excedido.")
-    else:
-        saldo -= valor
-        extrato += f"Saque: R$ {valor:.2f}\n"
-        numero_saques += 1
+def sacar():
+    cpf = input("Informe o CPF do cliente: ")
+    cliente = filtrar_clientes(cpf, clientes)
+    
+    if not cliente:
+        print("Cliente não encontrado!")
+        return
+    valor = float(input("Informe o valor do saque: "))
+    transacao = Saque(valor)
+
+    conta = cliente["conta"][0]
+    if not conta:
+        print("Conta não encontrada!")
+        return
+
+    cliente.realizar_transacao(conta, transacao)
 
 def mostrar_extrato():
     global extrato, saldo
@@ -256,15 +260,10 @@ while True:
     opcao = input(menu)
 
     if opcao == "d":
-        valor = float(input("Informe o valor do depósito: "))
-        if valor > 0:
-            depositar(valor)
-        else:
-            print("Operação falhou! O valor informado é inválido.")
+        depositar()
 
     elif opcao == "s":
-        valor = float(input("Informe o valor do saque: "))
-        sacar(valor)
+        sacar()
 
     elif opcao == "e":
         mostrar_extrato()
