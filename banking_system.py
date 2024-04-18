@@ -77,7 +77,7 @@ class ContaCorrente(Conta):
         self.limite_saques = 3
     
     def sacar(self, valor):
-        numero_saques = len([transacao for transacao in self.historico.transacoes if transacao["tipo"] == "Saque"])
+        numero_saques = len([transacao for transacao in self.historico.transacoes if transacao["tipo"] == Saque.__name__])
 
         if numero_saques >= self.limite_saques:
             print("Operação falhou! Número máximo de saques excedido.")
@@ -122,6 +122,17 @@ class Transacao(ABC):
         pass
     
 
+class Saque(Transacao):
+    def __init__(self, valor):
+        self._valor = valor
+
+    @property
+    def valor(self):
+        return self._valor
+
+    def registrar(self, conta):
+        if conta.sacar(self.valor):
+            conta.historico.adicionar_transacao(self)
     
 
 LIMITE_SAQUES = 3
