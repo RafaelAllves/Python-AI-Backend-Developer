@@ -1,5 +1,19 @@
 import textwrap
 
+
+class Cliente():
+    def __init__(self, endereco):
+        self.endereco = endereco
+        self.contas = []
+    
+    def realizar_transacao(conta, transacao):
+        print("Transação realizada com sucesso!")
+        pass
+    
+    def add_conta(self, conta):
+        self.contas.append(conta)
+
+
 LIMITE_SAQUES = 3
 
 saldo = 0
