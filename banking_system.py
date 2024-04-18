@@ -208,11 +208,11 @@ def filtrar_clientes(cpf, clientes):
 
 def criar_conta(numero_conta, clientes):
     cpf = input("Informe o CPF do usuário: ")
-    usuario = filtrar_clientes(cpf, clientes)
+    cliente = filtrar_clientes(cpf, clientes)
 
-    if usuario:
+    if cliente:
         print("\n=== Conta criada com sucesso! ===")
-        return {"agencia": "0001", "numero_conta": numero_conta, "usuario": usuario}
+        return {"agencia": "0001", "numero_conta": numero_conta, "cliente": cliente}
 
     print("\n@@@ Usuário não encontrado, fluxo de criação de conta encerrado! @@@")
     return None
@@ -222,7 +222,7 @@ def listar_contas(contas):
         linha = f"""\
             Agência:\t{conta['agencia']}
             C/C:\t\t{conta['numero_conta']}
-            Titular:\t{conta['usuario']['nome']}
+            Titular:\t{conta['cliente']['nome']}
         """
         print("=" * 100)
         print(textwrap.dedent(linha))
@@ -232,7 +232,7 @@ menu = """
 [s] Sacar
 [e] Extrato
 [c] Criar conta
-[u] Criar usuário
+[u] Criar cliente
 [l] Listar contas
 [q] Sair
 
