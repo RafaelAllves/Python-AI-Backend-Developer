@@ -12,7 +12,7 @@ class Cliente():
         print("Transação realizada com sucesso!")
         pass
     
-    def add_conta(self, conta):
+    def adicionar_conta(self, conta):
         self.contas.append(conta)
 
 class PessoaFisica(Cliente):
@@ -206,16 +206,19 @@ def filtrar_clientes(cpf, clientes):
             return cliente
     return None
 
-def criar_conta(numero_conta, clientes):
+def criar_conta(numero_conta, clientes, contas):
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_clientes(cpf, clientes)
 
-    if cliente:
-        print("\n=== Conta criada com sucesso! ===")
-        return {"agencia": "0001", "numero_conta": numero_conta, "cliente": cliente}
+    if not cliente:
+        print("\n@@@ Cliente não encontrado, fluxo de criação de conta encerrado! @@@")
+        return None
 
-    print("\n@@@ Cliente não encontrado, fluxo de criação de conta encerrado! @@@")
-    return None
+    print("\n=== Conta criada com sucesso! ===")
+    conta = ContaCorrente.nova_conta(numero_conta, cliente)
+    contas.append(conta)
+    cliente.adicionar_conta(conta)
+    return 
 
 def listar_contas(contas):
     for conta in contas:
@@ -257,7 +260,7 @@ while True:
 
     elif opcao == "c":
         numero_conta = input("Informe o número da conta: ")
-        conta = criar_conta(numero_conta, clientes)
+        conta = criar_conta(numero_conta, clientes, contas)
         if conta:
             contas.append(conta)
 
