@@ -224,7 +224,7 @@ def listar_contas(contas):
     for conta in contas:
         linha = f"""\
             Agência:\t{conta['agencia']}
-            C/C:\t\t{conta['numero_conta']}
+            C/C:\t\t{conta['numero']}
             Titular:\t{conta['cliente']['nome']}
         """
         print("=" * 100)
