@@ -193,10 +193,31 @@ def sacar():
     cliente.realizar_transacao(conta, transacao)
 
 def mostrar_extrato():
-    global extrato, saldo
+
+    cpf = input("Informe o CPF do cliente: ")
+    cliente = filtrar_clientes(cpf, clientes)
+
+    if not cliente:
+        print("Cliente não encontrado!")
+        return
+
+    conta = cliente["conta"][0]
+    if not conta:
+        print("Conta não encontrada!")
+        return
+
     print("\n================ EXTRATO ================")
-    print("Não foram realizadas movimentações." if not extrato else extrato)
-    print(f"\nSaldo: R$ {saldo:.2f}")
+    transacoes = conta.historico.transacoes
+
+    extrato = ""
+    if not transacoes:
+        extrato = "Não foram realizadas movimentações."
+    else:
+        for transacao in transacoes:
+            extrato += f"\n{transacao['tipo']}:\n\tR$ {transacao['valor']:.2f}"
+
+    print(extrato)
+    print(f"\nSaldo:\n\tR$ {conta.saldo:.2f}")
     print("==========================================")
 
 def criar_cliente(clientes):
@@ -246,7 +267,7 @@ def listar_contas(contas):
             C/C:\t\t{conta['numero']}
             Titular:\t{conta['cliente']['nome']}
         """
-        print("=" * 100)
+        print("=" * 42)
         print(textwrap.dedent(linha))
 
 menu = """
