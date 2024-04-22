@@ -2,6 +2,27 @@ import textwrap
 from datetime import datetime
 from abc import ABC, abstractmethod
 
+class ContasInterador():
+    def __init__(self, contas):
+        self.contas = contas
+        self._index = 0
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        try:
+            conta = self.contas[self._index]
+            return f"""
+                Agência:\t{conta.agencia}
+                C/C:\t\t{conta.numero}
+                Titular:\t{conta.cliente.nome}
+                Saldo:\t\t{conta.saldo:.2f}
+            """
+        except IndexError:
+            raise StopIteration
+        finally:
+            self._index += 1
 
 class Cliente():
     def __init__(self, endereco):
@@ -296,18 +317,9 @@ def criar_conta(clientes, contas):
     return 
 
 def listar_contas(contas):
-
-    if not contas:
-        print("Não existem contas cadastradas!")
-        return
-    for conta in contas:
-        linha = f"""\
-            Agência:\t{conta.agencia}
-            C/C:\t\t{conta.numero}
-            Titular:\t{conta.cliente.nome}
-        """
+    for conta in ContasInterador(contas):
         print("=" * 42)
-        print(textwrap.dedent(linha))
+        print(textwrap.dedent(str(conta)))
 
 menu = """
 [d] Depositar
