@@ -158,6 +158,16 @@ numero_saques = 0
 contas = []
 clientes = []
 
+
+def log_transacao(func):
+    def envelope(*args, **kwargs):
+        resultado = func(*args, **kwargs)
+        print(f"{datetime.now()}:  {func.__name__.upper()}")
+        return  resultado
+    return envelope
+
+
+@log_transacao
 def depositar():
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_clientes(cpf, clientes)
@@ -179,6 +189,7 @@ def depositar():
 
     cliente.realizar_transacao(conta, transacao)
 
+@log_transacao
 def sacar():
     cpf = input("Informe o CPF do cliente: ")
     cliente = filtrar_clientes(cpf, clientes)
@@ -201,6 +212,7 @@ def sacar():
 
     cliente.realizar_transacao(conta, transacao)
 
+@log_transacao
 def mostrar_extrato():
 
     cpf = input("Informe o CPF do cliente: ")
@@ -233,6 +245,7 @@ def mostrar_extrato():
     print(f"\nSaldo:\n\tR$ {conta.saldo:.2f}")
     print("==========================================")
 
+@log_transacao
 def criar_cliente(clientes):
     cpf = input("Informe o CPF (somente números): ")
     if not cpf.isdigit():
@@ -259,6 +272,7 @@ def filtrar_clientes(cpf, clientes):
             return cliente
     return None
 
+@log_transacao
 def criar_conta(clientes, contas):
 
     cpf = input("Informe o CPF do cliente: ")
