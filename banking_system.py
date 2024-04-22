@@ -113,6 +113,11 @@ class Historico():
             "valor": transacao.valor,
             "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s"),
         })
+    
+    def gerar_relatorio(self, tipo_transacao=None):
+        for transacao in self._transacoes:
+            if tipo_transacao is None or transacao["tipo"].lower() == tipo_transacao.lower():
+                yield transacao
 
 class Transacao(ABC):
     @property
@@ -232,14 +237,14 @@ def mostrar_extrato():
         return
 
     print("\n================ EXTRATO ================")
-    transacoes = conta.historico.transacoes
-
     extrato = ""
-    if not transacoes:
+    tem_transacoes = False
+    for transacao in conta.historico.gerar_relatorio():
+        tem_transacoes = True
+        extrato += f"\n{transacao['tipo']}:\n\tR$ {transacao['valor']:.2f}"
+
+    if not tem_transacoes:
         extrato = "Não foram realizadas movimentações."
-    else:
-        for transacao in transacoes:
-            extrato += f"\n{transacao['tipo']}:\n\tR$ {transacao['valor']:.2f}"
 
     print(extrato)
     print(f"\nSaldo:\n\tR$ {conta.saldo:.2f}")
