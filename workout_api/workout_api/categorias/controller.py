@@ -24,4 +24,14 @@ async def post(
     await db_session.commit()
 
     return categoria_out
+
+@router.get(
+    '/', 
+    summary='Consultar todas as Categorias',
+    status_code=status.HTTP_200_OK,
+    response_model=list[CategoriaOut],
+)
+async def query(db_session: DatabaseDependency) -> list[CategoriaOut]:
+    categorias: list[CategoriaOut] = (await db_session.execute(select(CategoriaModel))).scalars().all()
     
+    return categorias
