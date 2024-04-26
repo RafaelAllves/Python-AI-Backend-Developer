@@ -10,3 +10,6 @@ class CentroTreinamentoIn(BaseSchema):
 
 class CentroTreinamentoOut(CentroTreinamentoIn):
     id: Annotated[UUID4, Field(description='Identificador do centro de treinamento')]
+
+class CentroTreinamentoAtleta(BaseSchema):
+    nome: Annotated[str, Field(description='Nome do centro de treinamento', example='CT King', max_length=20)]
