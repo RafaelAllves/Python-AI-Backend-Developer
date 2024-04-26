@@ -1,5 +1,5 @@
 from uuid import uuid4
-from fastapi import APIRouter, Body, status
+from fastapi import APIRouter, Body, HTTPException, status
 from pydantic import UUID4
 from workout_api.centro_treinamento.schemas import CentroTreinamentoIn, CentroTreinamentoOut
 from workout_api.centro_treinamento.models import CentroTreinamentoModel
@@ -39,3 +39,23 @@ async def query(db_session: DatabaseDependency) -> list[CentroTreinamentoOut]:
     ).scalars().all()
     
     return centros_treinamento_out
+
+
+@router.get(
+    '/{id}', 
+    summary='Consulta um centro de treinamento pelo id',
+    status_code=status.HTTP_200_OK,
+    response_model=CentroTreinamentoOut,
+)
+async def get(id: UUID4, db_session: DatabaseDependency) -> CentroTreinamentoOut:
+    centro_treinamento_out: CentroTreinamentoOut = (
+        await db_session.execute(select(CentroTreinamentoModel).filter_by(id=id))
+    ).scalars().first()
+
+    if not centro_treinamento_out:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f'Centro de treinamento não encontrado no id: {id}'
+        )
+    
+    return centro_treinamento_out
