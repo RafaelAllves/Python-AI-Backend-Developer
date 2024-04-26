@@ -25,3 +25,17 @@ async def post(
     await db_session.commit()
 
     return centro_treinamento_out
+    
+    
+@router.get(
+    '/', 
+    summary='Consultar todos os centros de treinamento',
+    status_code=status.HTTP_200_OK,
+    response_model=list[CentroTreinamentoOut],
+)
+async def query(db_session: DatabaseDependency) -> list[CentroTreinamentoOut]:
+    centros_treinamento_out: list[CentroTreinamentoOut] = (
+        await db_session.execute(select(CentroTreinamentoModel))
+    ).scalars().all()
+    
+    return centros_treinamento_out
