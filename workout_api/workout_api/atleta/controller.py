@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, Body, status, HTTPException
+from fastapi_pagination import Page, paginate
 from pydantic import UUID4
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
@@ -10,7 +11,6 @@ from workout_api.atleta.models import AtletaModel
 from workout_api.categorias.models import CategoriaModel
 from workout_api.centro_treinamento.models import CentroTreinamentoModel
 from workout_api.contrib.dependencies import DatabaseDependency
-from fastapi_pagination import Page, paginate
 
 router = APIRouter()
 

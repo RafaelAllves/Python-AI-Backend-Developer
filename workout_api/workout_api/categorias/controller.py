@@ -1,12 +1,13 @@
 from http.client import HTTPException
 from uuid import uuid4
 from fastapi import APIRouter, Body, status
+from fastapi_pagination import Page, paginate
 from pydantic import UUID4
+from sqlalchemy.future import select
+from sqlalchemy.exc import IntegrityError
 from workout_api.categorias.models import CategoriaModel
 from workout_api.categorias.schemas import CategoriaIn, CategoriaOut
 from workout_api.contrib.dependencies import DatabaseDependency
-from sqlalchemy.future import select
-from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
@@ -47,12 +48,12 @@ async def post(
     '/', 
     summary='Consultar todas as Categorias',
     status_code=status.HTTP_200_OK,
-    response_model=list[CategoriaOut],
+    response_model=Page[CategoriaOut],
 )
-async def query(db_session: DatabaseDependency) -> list[CategoriaOut]:
+async def query(db_session: DatabaseDependency) -> Page[CategoriaOut]:
     categorias: list[CategoriaOut] = (await db_session.execute(select(CategoriaModel))).scalars().all()
     
-    return categorias
+    return paginate(categorias)
 
 
 @router.get(
