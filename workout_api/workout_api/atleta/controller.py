@@ -10,6 +10,7 @@ from workout_api.atleta.models import AtletaModel
 from workout_api.categorias.models import CategoriaModel
 from workout_api.centro_treinamento.models import CentroTreinamentoModel
 from workout_api.contrib.dependencies import DatabaseDependency
+from fastapi_pagination import Page, paginate
 
 router = APIRouter()
 
@@ -72,13 +73,13 @@ async def post(
     '/',
     summary='Consultar todos os Atletas',
     status_code=status.HTTP_200_OK,
-    response_model=list[AtletasOut],
+    response_model=Page[AtletasOut],
 )
 async def query(
     db_session: DatabaseDependency,
     cpf: Optional[str] = None,
-    nome: Optional[str] = None
-) -> list[AtletasOut]:
+    nome: Optional[str] = None,
+) -> Page[AtletasOut]:
     query = select(AtletaModel)
 
     if cpf:
@@ -88,7 +89,8 @@ async def query(
     
     atletas: list[AtletasOut] = (await db_session.execute(query)).scalars().all()
 
-    return [AtletasOut.model_validate(atleta) for atleta in atletas]
+    return paginate(atletas)
+
 
 @router.get(
     '/{id}', 
