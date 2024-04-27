@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body, status, HTTPException
 from pydantic import UUID4
 from sqlalchemy.future import select
 from uuid import uuid4
-from workout_api.atleta.schemas import AtletaIn, AtletaOut
+from workout_api.atleta.schemas import AtletaIn, AtletaOut, AtletaUpdate
 from workout_api.atleta.models import AtletaModel
 from workout_api.categorias.models import CategoriaModel
 from workout_api.centro_treinamento.models import CentroTreinamentoModel
@@ -88,4 +88,24 @@ async def get(id: UUID4, db_session: DatabaseDependency) -> AtletaOut:
             detail=f'Atleta não encontrado no id: {id}'
         )
     
+    return atleta
+
+@router.patch(
+    '/{id}', 
+    summary='Editar um Atleta pelo id',
+    status_code=status.HTTP_200_OK,
+    response_model=AtletaOut,
+)
+async def patch(id: UUID4, db_session: DatabaseDependency, atleta_up: AtletaUpdate = Body(...)) -> AtletaOut:
+    atleta: AtletaOut = (
+        await db_session.execute(select(AtletaModel).filter_by(id=id))
+    ).scalars().first()
+    
+    atleta_update = atleta_up.model_dump(exclude_unset=True)
+    for key, value in atleta_update.items():
+        setattr(atleta, key, value)
+
+    await db_session.commit()
+    await db_session.refresh(atleta)
+
     return atleta
