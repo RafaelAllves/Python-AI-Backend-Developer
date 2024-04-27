@@ -115,3 +115,22 @@ async def patch(id: UUID4, db_session: DatabaseDependency, atleta_up: AtletaUpda
     await db_session.refresh(atleta)
 
     return atleta
+
+@router.delete(
+    '/{id}', 
+    summary='Deletar um Atleta pelo id',
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete(id: UUID4, db_session: DatabaseDependency) -> None:
+    atleta: AtletaOut = (
+        await db_session.execute(select(AtletaModel).filter_by(id=id))
+    ).scalars().first()
+
+    if not atleta:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f'Atleta não encontrado no id: {id}'
+        )
+    
+    await db_session.delete(atleta)
+    await db_session.commit()
