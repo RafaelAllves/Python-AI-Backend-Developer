@@ -1,10 +1,12 @@
 from uuid import uuid4
 from fastapi import APIRouter, Body, HTTPException, status
+from fastapi_pagination import Page, paginate
 from pydantic import UUID4
+from sqlalchemy.future import select
+from sqlalchemy.exc import IntegrityError
 from workout_api.centro_treinamento.schemas import CentroTreinamentoIn, CentroTreinamentoOut
 from workout_api.centro_treinamento.models import CentroTreinamentoModel
 from workout_api.contrib.dependencies import DatabaseDependency
-from sqlalchemy.future import select
 
 router = APIRouter()
 
@@ -18,27 +20,41 @@ async def post(
     db_session: DatabaseDependency, 
     centro_treinamento_in: CentroTreinamentoIn = Body(...)
 ) -> CentroTreinamentoOut:
-    centro_treinamento_out = CentroTreinamentoOut(id=uuid4(), **centro_treinamento_in.model_dump())
-    centro_treinamento_model = CentroTreinamentoModel(**centro_treinamento_out.model_dump())
     
-    db_session.add(centro_treinamento_model)
-    await db_session.commit()
+    try:
+        centro_treinamento_out = CentroTreinamentoOut(id=uuid4(), **centro_treinamento_in.model_dump())
+        centro_treinamento_model = CentroTreinamentoModel(**centro_treinamento_out.model_dump())
+        
+        db_session.add(centro_treinamento_model)
+        await db_session.commit()
+
+    except IntegrityError:
+        db_session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_303_SEE_OTHER, 
+            detail=f"Já existe um centro treinamento cadastrado com o nome: {centro_treinamento_in.nome}"
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail='Ocorreu um erro ao inserir os dados no banco'
+        )
 
     return centro_treinamento_out
-    
+
     
 @router.get(
     '/', 
     summary='Consultar todos os centros de treinamento',
     status_code=status.HTTP_200_OK,
-    response_model=list[CentroTreinamentoOut],
+    response_model=Page[CentroTreinamentoOut],
 )
-async def query(db_session: DatabaseDependency) -> list[CentroTreinamentoOut]:
+async def query(db_session: DatabaseDependency) -> Page[CentroTreinamentoOut]:
     centros_treinamento_out: list[CentroTreinamentoOut] = (
         await db_session.execute(select(CentroTreinamentoModel))
     ).scalars().all()
     
-    return centros_treinamento_out
+    return paginate(centros_treinamento_out)
 
 
 @router.get(
