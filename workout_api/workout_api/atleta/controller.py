@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from fastapi import APIRouter, Body, status, HTTPException
 from pydantic import UUID4
 from sqlalchemy.future import select
@@ -61,13 +62,24 @@ async def post(
     return atleta_out
 
 @router.get(
-    '/', 
+    '/',
     summary='Consultar todos os Atletas',
     status_code=status.HTTP_200_OK,
     response_model=list[AtletaOut],
 )
-async def query(db_session: DatabaseDependency) -> list[AtletaOut]:
-    atletas: list[AtletaOut] = (await db_session.execute(select(AtletaModel))).scalars().all()
+async def query(
+    db_session: DatabaseDependency,
+    cpf: Optional[str] = None,
+    nome: Optional[str] = None
+) -> list[AtletaOut]:
+    query = select(AtletaModel)
+    
+    if cpf:
+        query = query.filter(AtletaModel.cpf == cpf)
+    if nome:
+        query = query.filter(AtletaModel.nome == nome)
+    
+    atletas: list[AtletaOut] = (await db_session.execute(query)).scalars().all()
     
     return [AtletaOut.model_validate(atleta) for atleta in atletas]
 
