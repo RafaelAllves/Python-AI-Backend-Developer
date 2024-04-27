@@ -1,5 +1,6 @@
 from datetime import datetime
 from fastapi import APIRouter, Body, status, HTTPException
+from pydantic import UUID4
 from sqlalchemy.future import select
 from uuid import uuid4
 from workout_api.atleta.schemas import AtletaIn, AtletaOut
@@ -69,3 +70,16 @@ async def query(db_session: DatabaseDependency) -> list[AtletaOut]:
     atletas: list[AtletaOut] = (await db_session.execute(select(AtletaModel))).scalars().all()
     
     return [AtletaOut.model_validate(atleta) for atleta in atletas]
+
+@router.get(
+    '/{id}', 
+    summary='Consulta um Atleta pelo id',
+    status_code=status.HTTP_200_OK,
+    response_model=AtletaOut,
+)
+async def get(id: UUID4, db_session: DatabaseDependency) -> AtletaOut:
+    atleta: AtletaOut = (
+        await db_session.execute(select(AtletaModel).filter_by(id=id))
+    ).scalars().first()
+    
+    return atleta
