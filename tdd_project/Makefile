@@ -3,3 +3,6 @@ run:
 
 precommit-install:
 	@pre-commit install
+
+test:
+	@pytest
