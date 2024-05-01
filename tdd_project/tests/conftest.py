@@ -1,6 +1,8 @@
 import pytest
 import asyncio
 from store.db.mongo import db_client
+from store.schemas.product import ProductIn
+from tests.factories import product_data
 
 
 @pytest.fixture(scope="session")
@@ -24,3 +26,8 @@ async def clear_collections(mongo_client):
             continue
 
         await mongo_client.get_database()[collection_name].delete_many({})
+
+
+@pytest.fixture
+def product_in(product_id):
+    return ProductIn(**product_data(), id=product_id)
