@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from store.db.mongo import db_client
-from store.schemas.product import ProductIn
+from store.schemas.product import ProductIn, ProductOut
 
 
 class ProductUsecase:
@@ -9,8 +9,9 @@ class ProductUsecase:
         self.database: AsyncIOMotorDatabase = self.client.get_database()
         self.collection = self.database.get_collection("products")
 
-    async def create(self, body: ProductIn):
-        await self.collection.insert_one(body.model_dump())
+    async def create(self, body: ProductIn) -> ProductOut:
+        product = await self.collection.insert_one(body.model_dump())
+        return product
 
 
 product_usecase = ProductUsecase()
