@@ -11,8 +11,8 @@ class ProductBase(BaseSchemaMixin):
 
 
 class ProductIn(ProductBase, BaseSchemaMixin):
-    ...
+    pass
 
 
 class ProductOut(ProductIn, OutSchema):
-    ...
+    pass
