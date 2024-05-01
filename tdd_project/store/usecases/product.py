@@ -11,11 +11,13 @@ class ProductUsecase:
         self.collection = self.database.get_collection("products")
 
     async def create(self, body: ProductIn) -> ProductOut:
-        product = await self.collection.insert_one(body.model_dump())
+        body_dict = body.model_dump()
+        body_dict["price"] = float(body_dict["price"])  # Convert Decimal to float
+        product = await self.collection.insert_one(body_dict)
         return product
 
     async def get(self, id: UUID) -> ProductOut:
-        result = await self.collection.find_one({"id": id})
+        result = await self.collection.find_one({"id": str(id)})
 
         return ProductOut(**result)
 
