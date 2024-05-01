@@ -1,6 +1,6 @@
 from decimal import Decimal
 from pydantic import Field
-from store.schemas.base import BaseSchemaMixin
+from store.schemas.base import BaseSchemaMixin, OutSchema
 
 
 class ProductBase(BaseSchemaMixin):
@@ -11,4 +11,8 @@ class ProductBase(BaseSchemaMixin):
 
 
 class ProductIn(ProductBase, BaseSchemaMixin):
+    ...
+
+
+class ProductOut(ProductIn, OutSchema):
     ...
