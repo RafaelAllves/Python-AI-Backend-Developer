@@ -36,4 +36,4 @@ def product_in(product_id):
 
 @pytest.fixture
 def product_id() -> UUID:
-    return UUID("fce6cc37-10b9-4a8e-a8b2-977df327001a")
+    return UUID("6632b44ec23ed5caccaa6b01")
