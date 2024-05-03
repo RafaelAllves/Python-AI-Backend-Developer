@@ -9,3 +9,5 @@ services:
     environment:
       - MONGODB_ADVERTISED_HOSTNAME=localhost
       - ALLOW_EMPTY_PASSWORD=yes
+
+# mongosh --host localhost --port 27017
