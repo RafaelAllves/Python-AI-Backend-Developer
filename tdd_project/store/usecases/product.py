@@ -18,7 +18,7 @@ class ProductUsecase:
         return ProductOut(**product_model.model_dump())
 
     async def get(self, id: UUID) -> ProductOut:
-        result = await self.collection.find_one({"id": id})
+        result = await self.collection.find_one({"id": str(id)})
 
         return ProductOut(**result)
 
