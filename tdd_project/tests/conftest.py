@@ -4,6 +4,7 @@ from uuid import UUID
 from store.db.mongo import db_client
 from store.schemas.product import ProductIn
 from tests.factories import product_data
+from store.usecases.product import product_usecase
 
 
 @pytest.fixture(scope="session")
@@ -30,10 +31,15 @@ async def clear_collections(mongo_client):
 
 
 @pytest.fixture
-def product_in(product_id):
+def product_in():
     return ProductIn(**product_data(), id=product_id)
 
 
 @pytest.fixture
 def product_id() -> UUID:
-    return UUID("6632b44ec23ed5caccaa6b01")
+    return UUID("6efbed42-d78e-4dc4-a4d1-725316279401")
+
+
+@pytest.fixture
+async def product_inserted(product_in):
+    return await product_usecase.create(body=product_in)

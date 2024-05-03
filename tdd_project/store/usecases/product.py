@@ -1,6 +1,7 @@
 from uuid import UUID
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from store.db.mongo import db_client
+from store.models.product import ProductModel
 from store.schemas.product import ProductIn, ProductOut
 
 
@@ -11,13 +12,13 @@ class ProductUsecase:
         self.collection = self.database.get_collection("products")
 
     async def create(self, body: ProductIn) -> ProductOut:
-        body_dict = body.model_dump()
-        body_dict["price"] = float(body_dict["price"])  # Convert Decimal to float
-        product = await self.collection.insert_one(body_dict)
-        return product
+        product_model = ProductModel(**body.model_dump())
+        await self.collection.insert_one(product_model.model_dump())
+
+        return ProductOut(**product_model.model_dump())
 
     async def get(self, id: UUID) -> ProductOut:
-        result = await self.collection.find_one({"id": str(id)})
+        result = await self.collection.find_one({"id": id})
 
         return ProductOut(**result)
 
