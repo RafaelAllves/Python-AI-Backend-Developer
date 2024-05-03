@@ -13,7 +13,8 @@ async def test_usecases_create_should_return_success(product_in):
 
 @pytest.mark.asyncio
 async def test_usecases_get_should_return_success(product_inserted):
-    result = await product_usecase.get(id=product_inserted.id)
+    product = await product_inserted
+    result = await product_usecase.get(id=product.id)
 
     assert isinstance(result, ProductOut)
     assert result.name == "Iphone 14 Pro Max"
