@@ -24,6 +24,20 @@ async def test_controller_create_should_return_success(client, products_url):
 
 
 @pytest.mark.asyncio
+async def test_controller_create_should_return_error(client, products_url):
+    invalid_product_data = {
+        "name": "",
+        "quantity": -1,
+        "price": "invalid",
+        "status": "not a boolean",
+    }
+
+    response = await client.post(products_url, json=invalid_product_data)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.asyncio
 async def test_controller_get_should_return_success(
     client, products_url, product_inserted
 ):
