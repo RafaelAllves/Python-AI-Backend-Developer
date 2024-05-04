@@ -62,3 +62,27 @@ async def test_controller_query_should_return_success(client, products_url):
     assert response.status_code == status.HTTP_200_OK
     assert isinstance(response.json(), List)
     assert len(response.json()) > 1
+
+
+@pytest.mark.asyncio
+async def test_controller_patch_should_return_success(
+    client, products_url, product_inserted
+):
+    product = await product_inserted
+    response = await client.patch(
+        f"{products_url}{product.id}", json={"price": "7.500"}
+    )
+
+    content = response.json()
+
+    del content["created_at"]
+    del content["updated_at"]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert content == {
+        "id": str(product.id),
+        "name": "Iphone 14 Pro Max",
+        "quantity": 10,
+        "price": "7.500",
+        "status": True,
+    }
