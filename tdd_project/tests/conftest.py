@@ -3,7 +3,7 @@ import asyncio
 from uuid import UUID
 from store.db.mongo import db_client
 from store.schemas.product import ProductIn
-from tests.factories import product_data
+from tests.factories import product_data, products_data
 from store.usecases.product import product_usecase
 
 
@@ -43,3 +43,8 @@ def product_id() -> UUID:
 @pytest.fixture
 async def product_inserted(product_in):
     return await product_usecase.create(body=product_in)
+
+
+@pytest.fixture
+def products_in():
+    return [ProductIn(**product) for product in products_data()]
