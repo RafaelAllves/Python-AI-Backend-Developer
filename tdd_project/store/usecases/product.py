@@ -3,6 +3,7 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from store.db.mongo import db_client
 from store.models.product import ProductModel
 from store.schemas.product import ProductIn, ProductOut
+from store.core.exceptions import NotFoundException
 
 
 class ProductUsecase:
@@ -19,6 +20,9 @@ class ProductUsecase:
 
     async def get(self, id: UUID) -> ProductOut:
         result = await self.collection.find_one({"id": str(id)})
+
+        if not result:
+            raise NotFoundException(message=f"Product not found with filter: {id}")
 
         return ProductOut(**result)
 
