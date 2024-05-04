@@ -62,11 +62,10 @@ def product_up(product_id):
 
 
 @pytest.fixture
-async def client() -> AsyncClient:
+def client() -> AsyncClient:
     from store.main import app
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        yield ac
+    return AsyncClient(app=app, base_url="http://test")
 
 
 @pytest.fixture
