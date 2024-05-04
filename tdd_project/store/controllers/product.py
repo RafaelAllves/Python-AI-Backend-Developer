@@ -43,4 +43,7 @@ async def patch(
 async def delete(
     id: UUID4 = Path(alias="id"), usecase: ProductUsecase = Depends()
 ) -> None:
-    await usecase.delete(id=id)
+    try:
+        await usecase.delete(id=id)
+    except NotFoundException as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=exc.message)
