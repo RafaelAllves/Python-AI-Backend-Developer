@@ -20,3 +20,24 @@ async def test_controller_create_should_return_success(client, products_url):
         "price": "8.500",
         "status": True,
     }
+
+
+@pytest.mark.asyncio
+async def test_controller_get_should_return_success(
+    client, products_url, product_inserted
+):
+    response = await client.get(f"{products_url}{product_inserted.id}")
+
+    content = response.json()
+
+    del content["created_at"]
+    del content["updated_at"]
+
+    assert response.status_code == status.HTTP_200_OK
+    assert content == {
+        "id": str(product_inserted.id),
+        "name": "Iphone 14 Pro Max",
+        "quantity": 10,
+        "price": "8.500",
+        "status": True,
+    }
