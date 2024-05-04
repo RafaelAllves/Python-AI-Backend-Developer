@@ -1,3 +1,4 @@
+from httpx import AsyncClient
 import pytest
 import asyncio
 from uuid import UUID
@@ -58,3 +59,11 @@ async def products_inserted(products_in):
 @pytest.fixture
 def product_up(product_id):
     return ProductUpdate(**product_data(), id=product_id)
+
+
+@pytest.fixture
+async def client() -> AsyncClient:
+    from store.main import app
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac
