@@ -46,7 +46,7 @@ async def test_usecases_query_should_return_success():
 async def test_usecases_update_should_return_success(product_up, product_inserted):
     product_up.price = "7.500"
     product = await product_inserted
-    result = await product_usecase.update(id=str(product.id), body=product_up)
+    result = await product_usecase.update(id=product.id, body=product_up)
 
     assert isinstance(result, ProductUpdateOut)
 
@@ -54,7 +54,7 @@ async def test_usecases_update_should_return_success(product_up, product_inserte
 @pytest.mark.asyncio
 async def test_usecases_delete_should_return_success(product_inserted):
     product = await product_inserted
-    result = await product_usecase.delete(id=str(product.id))
+    result = await product_usecase.delete(id=product.id)
 
     assert result is True
 
