@@ -96,3 +96,15 @@ async def test_controller_delete_should_return_no_content(
     response = await client.delete(f"{products_url}{product.id}")
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
+
+
+@pytest.mark.asyncio
+async def test_controller_delete_should_return_not_found(client, products_url):
+    response = await client.delete(
+        f"{products_url}4fd7cd35-a3a0-4c1f-a78d-d24aa81e7dca"
+    )
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {
+        "detail": "Product not found with filter: 4fd7cd35-a3a0-4c1f-a78d-d24aa81e7dca"
+    }
