@@ -24,7 +24,9 @@ async def test_controller_create_should_return_success(client, products_url):
 
 
 @pytest.mark.asyncio
-async def test_controller_create_should_return_error(client, products_url):
+async def test_controller_create_should_return_unprocessable_entity(
+    client, products_url
+):
     invalid_product_data = {
         "name": "",
         "quantity": -1,
@@ -34,7 +36,7 @@ async def test_controller_create_should_return_error(client, products_url):
 
     response = await client.post(products_url, json=invalid_product_data)
 
-    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
 @pytest.mark.asyncio
