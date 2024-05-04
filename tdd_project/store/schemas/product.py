@@ -2,7 +2,7 @@ from decimal import Decimal
 from pydantic import Field
 from store.schemas.base import BaseSchemaMixin, OutSchema
 from bson import Decimal128
-from typing import Annotated
+from typing import Annotated, Optional
 from pydantic import AfterValidator
 
 
@@ -26,3 +26,13 @@ def convert_decimal_128(v):
 
 
 Decimal_ = Annotated[Decimal, AfterValidator(convert_decimal_128)]
+
+
+class ProductUpdate(BaseSchemaMixin):
+    quantity: Optional[int] = Field(None, description="Product quantity")
+    price: Optional[Decimal_] = Field(None, description="Product price")
+    status: Optional[bool] = Field(None, description="Product status")
+
+
+class ProductUpdateOut(ProductOut):
+    pass
