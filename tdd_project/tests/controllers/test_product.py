@@ -81,6 +81,21 @@ async def test_controller_query_should_return_success(client, products_url):
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("products_inserted")
+async def test_controller_query_should_return_filtered_products(client, products_url):
+    min_price = 5000
+    max_price = 8000
+    response = await client.get(
+        f"{products_url}?price%3E={min_price}&price%3C={max_price}"
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert isinstance(response.json(), List)
+    for product in response.json():
+        assert min_price <= float(product["price"]) <= max_price
+
+
+@pytest.mark.asyncio
 async def test_controller_patch_should_return_success(
     client, products_url, product_inserted
 ):
