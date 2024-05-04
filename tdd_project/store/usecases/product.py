@@ -33,12 +33,21 @@ class ProductUsecase:
 
     async def update(self, id: UUID, body: ProductUpdate) -> ProductUpdateOut:
         result = await self.collection.find_one_and_update(
-            filter={"id": id},
+            filter={"id": str(id)},
             update={"$set": body.model_dump(exclude_none=True)},
             return_document=pymongo.ReturnDocument.AFTER,
         )
 
         return ProductUpdateOut(**result)
+
+    async def delete(self, id: UUID) -> bool:
+        product = await self.collection.find_one({"id": str(id)})
+        if not product:
+            raise NotFoundException(message=f"Product not found with filter: {id}")
+
+        result = await self.collection.delete_one({"id": str(id)})
+
+        return True if result.deleted_count > 0 else False
 
 
 product_usecase = ProductUsecase()

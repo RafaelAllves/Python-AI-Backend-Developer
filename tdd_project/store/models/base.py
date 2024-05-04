@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 import uuid
+from bson import Decimal128
 from pydantic import UUID4, BaseModel, Field, model_serializer
 
 
@@ -16,7 +17,7 @@ class CreateBaseModel(BaseModel):
 
         for key, value in self_dict.items():
             if isinstance(value, Decimal):
-                self_dict[key] = float(value)
+                self_dict[key] = Decimal128(value)
             elif key == "id":
                 self_dict[key] = str(value)
 
