@@ -67,3 +67,8 @@ async def client() -> AsyncClient:
 
     async with AsyncClient(app=app, base_url="http://test") as ac:
         yield ac
+
+
+@pytest.fixture
+def products_url() -> str:
+    return "/products/"
