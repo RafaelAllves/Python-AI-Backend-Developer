@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Body, Depends, status, HTTPException, Path
 from pydantic import UUID4
+from typing import List
 from store.schemas.product import ProductIn, ProductOut
 from store.usecases.product import ProductUsecase
 from store.core.exceptions import NotFoundException
@@ -22,3 +23,8 @@ async def get(
         return await usecase.get(id=id)
     except NotFoundException as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=exc.message)
+
+
+@router.get(path="/", status_code=status.HTTP_200_OK)
+async def query(usecase: ProductUsecase = Depends()) -> List[ProductOut]:
+    return await usecase.query()
