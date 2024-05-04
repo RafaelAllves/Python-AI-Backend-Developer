@@ -42,8 +42,10 @@ async def test_usecases_query_should_return_success():
     assert len(result) > 1
 
 
+@pytest.mark.asyncio
 async def test_usecases_update_should_return_success(product_up, product_inserted):
     product_up.price = "7.500"
-    result = await product_usecase.update(id=product_inserted.id, body=product_up)
+    product = await product_inserted
+    result = await product_usecase.update(id=str(product.id), body=product_up)
 
     assert isinstance(result, ProductUpdateOut)
