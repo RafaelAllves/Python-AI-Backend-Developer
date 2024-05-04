@@ -49,3 +49,11 @@ async def test_usecases_update_should_return_success(product_up, product_inserte
     result = await product_usecase.update(id=str(product.id), body=product_up)
 
     assert isinstance(result, ProductUpdateOut)
+
+
+@pytest.mark.asyncio
+async def test_usecases_delete_should_return_success(product_inserted):
+    product = await product_inserted
+    result = await product_usecase.delete(id=str(product.id))
+
+    assert result is True
