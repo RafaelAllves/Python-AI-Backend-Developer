@@ -6,3 +6,6 @@ precommit-install:
 
 test:
 	@pytest
+
+test-matching:
+	@pytest -s -rx -k $(T) --pdb store ./tests/
