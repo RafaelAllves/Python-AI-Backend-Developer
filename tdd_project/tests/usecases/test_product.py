@@ -2,6 +2,7 @@ from uuid import UUID
 import pytest
 from store.schemas.product import ProductOut
 from store.usecases.product import product_usecase
+from store.core.exceptions import NotFoundException
 
 
 @pytest.mark.asyncio
@@ -23,10 +24,10 @@ async def test_usecases_get_should_return_success(product_inserted):
 
 @pytest.mark.asyncio
 async def test_usecases_get_should_not_found():
-    with pytest.raises(Exception) as err:
+    with pytest.raises(NotFoundException) as err:
         await product_usecase.get(id=UUID("1e4f214e-85f7-461a-89d0-a751a32e3bb9"))
 
     assert (
-        err.value.args[0]
+        err.value.message
         == "Product not found with filter: 1e4f214e-85f7-461a-89d0-a751a32e3bb9"
     )
