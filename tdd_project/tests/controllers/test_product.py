@@ -86,3 +86,13 @@ async def test_controller_patch_should_return_success(
         "price": "7.500",
         "status": True,
     }
+
+
+@pytest.mark.asyncio
+async def test_controller_delete_should_return_no_content(
+    client, products_url, product_inserted
+):
+    product = await product_inserted
+    response = await client.delete(f"{products_url}{product.id}")
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
