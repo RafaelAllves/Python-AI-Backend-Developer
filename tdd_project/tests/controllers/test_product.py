@@ -24,6 +24,22 @@ async def test_controller_create_should_return_success(client, products_url):
 
 
 @pytest.mark.asyncio
+async def test_controller_create_should_return_unprocessable_entity(
+    client, products_url
+):
+    invalid_product_data = {
+        "name": "",
+        "quantity": -1,
+        "price": "invalid",
+        "status": "not a boolean",
+    }
+
+    response = await client.post(products_url, json=invalid_product_data)
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+@pytest.mark.asyncio
 async def test_controller_get_should_return_success(
     client, products_url, product_inserted
 ):
@@ -65,6 +81,21 @@ async def test_controller_query_should_return_success(client, products_url):
 
 
 @pytest.mark.asyncio
+@pytest.mark.usefixtures("products_inserted")
+async def test_controller_query_should_return_filtered_products(client, products_url):
+    min_price = 5000
+    max_price = 8000
+    response = await client.get(
+        f"{products_url}?price%3E={min_price}&price%3C={max_price}"
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    assert isinstance(response.json(), List)
+    for product in response.json():
+        assert min_price <= float(product["price"]) <= max_price
+
+
+@pytest.mark.asyncio
 async def test_controller_patch_should_return_success(
     client, products_url, product_inserted
 ):
@@ -85,6 +116,18 @@ async def test_controller_patch_should_return_success(
         "quantity": 10,
         "price": "7.500",
         "status": True,
+    }
+
+
+@pytest.mark.asyncio
+async def test_controller_patch_should_return_not_found(client, products_url):
+    response = await client.patch(
+        f"{products_url}4fd7cd35-a3a0-4c1f-a78d-d24aa81e7dca", json={"price": "7.500"}
+    )
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.json() == {
+        "detail": "Product not found with filter: 4fd7cd35-a3a0-4c1f-a78d-d24aa81e7dca"
     }
 
 
